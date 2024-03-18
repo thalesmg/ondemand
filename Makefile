@@ -39,5 +39,6 @@ concuerror_tests: $(CONCUERROR)
 	$(call concuerror,spindown_already_up_test)
 	$(call concuerror,unknown_exit_test)
 	$(call concuerror,two_workers_test)
+	$(call concuerror,shutdown_spindown_test)
 
 prepare_concuerror: $(CONCUERROR)

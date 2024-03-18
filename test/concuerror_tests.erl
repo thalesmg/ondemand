@@ -120,3 +120,33 @@ two_workers_test() ->
     end,
     stop_manager(),
     ok.
+
+shutdown_spindown_test() ->
+    start_manager(),
+    Key = 1,
+    ondemand_manager:ensure_started(manager, Key),
+    Ref = monitor(process, resolve(Key)),
+    Me = self(),
+    Req = fun() ->
+        Resp = request(Key),
+        Me ! {done, Resp}
+    end,
+    spawn(Req),
+    spawn(Req),
+    spawn(fun() ->
+        dummy_worker:spindown_with(resolve(Key), {shutdown, spindown})
+    end),
+    receive
+        {'DOWN', Ref, process, _, _} ->
+            ok
+    end,
+    receive
+        {done, ok} -> ok;
+        {done, died} -> ok
+    end,
+    receive
+        {done, ok} -> ok;
+        {done, died} -> ok
+    end,
+    stop_manager(),
+    ok.

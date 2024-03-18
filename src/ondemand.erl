@@ -21,6 +21,9 @@ request(Manager, ResolveFn, Key, Request) ->
                 {'DOWN', Ref, process, Pid, spindown} ->
                     ondemand_manager:ensure_started(Manager, Key),
                     request(Manager, ResolveFn, Key, Request);
+                {'DOWN', Ref, process, Pid, {shutdown, spindown}} ->
+                    ondemand_manager:ensure_started(Manager, Key),
+                    request(Manager, ResolveFn, Key, Request);
                 {'DOWN', Ref, process, Pid, Reason} ->
                     error({worker_died, Reason})
             end
