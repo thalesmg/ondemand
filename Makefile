@@ -22,23 +22,9 @@ $(CONCUERROR):
 	  git apply $(CONCUERROR_PATCH)
 	$(MAKE) -C _build/concuerror/
 
-CONCUERROR_RUN := $(CONCUERROR) \
-	--treat_as_normal spindown --treat_as_normal normal --treat_as_normal shutdown \
-	--treat_as_normal boom \
-	-x logger -x error_handler \
-	--pa $(BUILD_DIR)/test/lib/ondemand/ebin \
-	--pa $(BUILD_DIR)/test/lib/ondemand/test/extra_src
-
-concuerror = $(CONCUERROR_RUN) -f $(BUILD_DIR)/test/lib/ondemand/test/concuerror_tests.beam -t $(1) || \
-	{ cat concuerror_report.txt; exit 1; }
-
 .PHONY: concuerror_tests
 concuerror_tests: $(CONCUERROR)
 	rebar3 as test compile
-	$(call concuerror,spinup_spindown_test)
-	$(call concuerror,spindown_already_up_test)
-	$(call concuerror,unknown_exit_test)
-	$(call concuerror,two_workers_test)
-	$(call concuerror,shutdown_spindown_test)
+	test/run_concuerror.sh
 
 prepare_concuerror: $(CONCUERROR)
