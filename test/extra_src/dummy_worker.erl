@@ -36,5 +36,5 @@ handle_cast({spindown, Reason}, State) ->
     {stop, Reason, State}.
 
 handle_info({Ref, From, req}, State) ->
-    From ! {Ref, ok},
+    From ! {From, Ref, ok},
     {noreply, State}.

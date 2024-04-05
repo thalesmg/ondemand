@@ -21,13 +21,15 @@ function run_concuerror() {
 
   rm concuerror_report.txt || true
 
+  APP_DIR="${BUILD_DIR}/concuerror+test/lib/ondemand"
+
   "$CONCUERROR" \
     --treat_as_normal spindown --treat_as_normal normal --treat_as_normal shutdown \
     --treat_as_normal boom \
     -x logger -x error_handler \
-    --pa "${BUILD_DIR}/test/lib/ondemand/ebin" \
-    --pa "${BUILD_DIR}/test/lib/ondemand/test/extra_src" \
-    -f "${BUILD_DIR}/test/lib/ondemand/test/concuerror_tests.beam" \
+    --pa "${APP_DIR}/ebin" \
+    --pa "${APP_DIR}/test/extra_src" \
+    -f "${APP_DIR}/test/concuerror_tests.beam" \
     -t "$test" || {
     cat concuerror_report.txt
     exit 1

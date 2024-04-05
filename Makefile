@@ -24,7 +24,8 @@ $(CONCUERROR):
 
 .PHONY: concuerror_tests
 concuerror_tests: $(CONCUERROR)
-	rebar3 as test compile
+	rebar3 as test ct
+	rebar3 as concuerror,test compile
 	test/run_concuerror.sh
 
 prepare_concuerror: $(CONCUERROR)
