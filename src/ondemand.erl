@@ -9,8 +9,7 @@ request(Manager, ResolveFn, Key, Request) ->
             ondemand_manager:ensure_started(Manager, Key),
             request(Manager, ResolveFn, Key, Request);
         Pid when is_pid(Pid) ->
-            Ref = monitor(process, Pid),
-            Alias = from(),
+            {Ref, Alias} = monitor_alias(Pid),
             Pid ! {Ref, Alias, Request},
             receive
                 {Alias, Ref, Resp} ->
@@ -35,14 +34,16 @@ request(Manager, ResolveFn, Key, Request) ->
     end.
 
 -ifdef(CONCUERROR).
-from() ->
-    self().
+monitor_alias(Pid) ->
+    Ref = monitor(process, Pid),
+    {Ref, self()}.
 
 un_alias(_Alias) ->
     ok.
 -else.
-from() ->
-    alias([reply]).
+monitor_alias(Pid) ->
+    Ref = monitor(process, Pid, [{alias, reply_demonitor}]),
+    {Ref, Ref}.
 
 un_alias(Alias) ->
     unalias(Alias).
